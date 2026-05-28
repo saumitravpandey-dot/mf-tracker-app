@@ -3,6 +3,10 @@
 
 import type { Profile, Holding, Redemption, HoldingRow } from './types'
 import { xirr } from './analytics'
+import { SAMPLE_HOLDINGS, SAMPLE_REDEMPTIONS } from './sampleData'
+
+const SAMPLE_PROFILE = 'Sample Portfolio'
+const SAMPLE_SEEDED_KEY = 'mft_sample_seeded_v1'
 
 const K = {
   profiles: 'mft_profiles',
@@ -186,4 +190,49 @@ export async function loadEnrichedHoldings(profile: string): Promise<HoldingRow[
   if (raw.length === 0) return []
   const navMap = await fetchNavMap(raw.map((h) => h.scheme_code))
   return enrichHoldings(raw, navMap)
+}
+
+// ---------------------------------------------------------------------------
+// Sample Portfolio seeding
+// ---------------------------------------------------------------------------
+
+/**
+ * Ensure the "Sample Portfolio" profile and its holdings/redemptions always
+ * exist in localStorage. Called once on app mount. Re-seeds if the profile
+ * was deleted or holdings are missing.
+ */
+export function ensureSamplePortfolio(): void {
+  if (typeof window === 'undefined') return
+
+  const profiles = getProfiles()
+  const exists   = profiles.some((p) => p.name === SAMPLE_PROFILE)
+  const holdings = getHoldings(SAMPLE_PROFILE)
+
+  // Already seeded and intact — nothing to do
+  if (exists && holdings.length > 0 && ls_read(SAMPLE_SEEDED_KEY, false)) return
+
+  // Seed / re-seed
+  if (!exists) createProfile(SAMPLE_PROFILE)
+
+  // Clear any leftover partial data for this profile
+  const allH = ls_read<Holding[]>(K.holdings, [])
+  const allR = ls_read<Redemption[]>(K.redemptions, [])
+  ls_write(K.holdings,    allH.filter((h) => h.profile_name !== SAMPLE_PROFILE))
+  ls_write(K.redemptions, allR.filter((r) => r.profile_name !== SAMPLE_PROFILE))
+
+  // Insert sample data with stable IDs so re-seeding is idempotent
+  const newHoldings: Holding[] = SAMPLE_HOLDINGS.map((h, i) => ({
+    ...h,
+    id:         `sample-h-${i}`,
+    created_at: new Date(h.buy_date).toISOString(),
+  }))
+  const newRedemptions: Redemption[] = SAMPLE_REDEMPTIONS.map((r, i) => ({
+    ...r,
+    id:         `sample-r-${i}`,
+    created_at: new Date(r.sell_date).toISOString(),
+  }))
+
+  ls_write(K.holdings,    [...ls_read<Holding[]>(K.holdings, []),       ...newHoldings])
+  ls_write(K.redemptions, [...ls_read<Redemption[]>(K.redemptions, []), ...newRedemptions])
+  ls_write(SAMPLE_SEEDED_KEY, true)
 }
