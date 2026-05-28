@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import { getProfiles, createProfile, addHolding } from '@/lib/store'
 
 function getProfile(): string {
   if (typeof window === 'undefined') return 'Default'
@@ -38,14 +39,8 @@ export default function ImportPage() {
 
   useEffect(() => {
     setProfile(getProfile())
-    fetch('/api/profiles')
-      .then((r) => r.json())
-      .then((d: { name: string }[]) => {
-        if (Array.isArray(d) && d.length > 0) {
-          setProfiles(d.map((p) => p.name))
-        }
-      })
-      .catch(() => {})
+    const stored = getProfiles()
+    if (stored.length > 0) setProfiles(stored.map((p) => p.name))
   }, [])
 
   function parseCSV(text: string): ParsedRow[] {
@@ -94,7 +89,7 @@ export default function ImportPage() {
     []
   )
 
-  async function handleImport() {
+  function handleImport() {
     setImporting(true)
     setProgress(0)
     setResult(null)
@@ -104,21 +99,16 @@ export default function ImportPage() {
     for (let i = 0; i < valid.length; i++) {
       const r = valid[i]
       try {
-        const res = await fetch('/api/holdings', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            scheme_code: parseInt(r.scheme_code),
-            scheme_name: r.scheme_name,
-            units: parseFloat(r.units),
-            buy_nav: parseFloat(r.buy_nav),
-            buy_date: r.buy_date,
-            notes: r.notes,
-            profile_name: profile,
-          }),
+        addHolding({
+          scheme_code: parseInt(r.scheme_code),
+          scheme_name: r.scheme_name,
+          units: parseFloat(r.units),
+          buy_nav: parseFloat(r.buy_nav),
+          buy_date: r.buy_date,
+          notes: r.notes,
+          profile_name: profile,
         })
-        if (res.ok) imported++
-        else skipped++
+        imported++
       } catch {
         skipped++
       }
@@ -129,14 +119,10 @@ export default function ImportPage() {
     setStep(3)
   }
 
-  async function handleCreateProfile() {
+  function handleCreateProfile() {
     const name = newProfileName.trim()
     if (!name) return
-    await fetch('/api/profiles', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name }),
-    })
+    createProfile(name)
     setProfiles([...profiles, name])
     setProfile(name)
     localStorage.setItem('mft_profile', name)
@@ -360,7 +346,7 @@ export default function ImportPage() {
                   ← Back
                 </button>
                 <button
-                  onClick={handleImport}
+                  onClick={() => handleImport()}
                   disabled={importing}
                   className="bg-indigo-600 text-white text-sm px-5 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50"
                 >

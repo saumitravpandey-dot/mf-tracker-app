@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { getProfiles, createProfile } from '@/lib/store'
 
 const STORAGE_KEY = 'mft_profile'
 
@@ -28,27 +29,19 @@ export default function ProfileSelector() {
   const [newName, setNewName] = useState('')
 
   useEffect(() => {
-    fetch('/api/profiles')
-      .then((r) => r.json())
-      .then((data: { name: string }[]) => {
-        if (Array.isArray(data) && data.length > 0) {
-          const names = data.map((p) => p.name)
-          setProfiles(names)
-          const stored = localStorage.getItem(STORAGE_KEY)
-          if (!stored && names.length > 0) setProfile(names[0])
-        }
-      })
-      .catch(() => {})
+    const stored = getProfiles()
+    if (stored.length > 0) {
+      const names = stored.map((p) => p.name)
+      setProfiles(names)
+      const active = localStorage.getItem(STORAGE_KEY)
+      if (!active) setProfile(names[0])
+    }
   }, [])
 
-  async function handleCreate() {
+  function handleCreate() {
     const name = newName.trim()
     if (!name) return
-    await fetch('/api/profiles', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name }),
-    })
+    createProfile(name)
     const updated = [...profiles, name]
     setProfiles(updated)
     setProfile(name)

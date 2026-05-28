@@ -5,6 +5,7 @@ import PortfolioChart from '@/components/PortfolioChart'
 import MetricCard from '@/components/MetricCard'
 import { formatINR, formatPct, colorForValue } from '@/lib/types'
 import type { HoldingRow } from '@/lib/types'
+import { loadEnrichedHoldings } from '@/lib/store'
 
 function getProfile(): string {
   if (typeof window === 'undefined') return 'Default'
@@ -32,11 +33,10 @@ export default function HistoryPage() {
 
   useEffect(() => {
     setLoading(true)
-    fetch(`/api/holdings?profile=${encodeURIComponent(profile)}`)
-      .then((r) => r.json())
-      .then((data: HoldingRow[]) => {
-        setHoldings(data ?? [])
-        buildTimeSeries(data ?? [])
+    loadEnrichedHoldings(profile)
+      .then((data) => {
+        setHoldings(data)
+        buildTimeSeries(data)
       })
       .catch(() => setHoldings([]))
       .finally(() => setLoading(false))

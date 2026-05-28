@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import MetricCard from '@/components/MetricCard'
 import { formatINR, formatPct, colorForValue } from '@/lib/types'
 import type { Redemption, HoldingRow } from '@/lib/types'
+import { getRedemptions, loadEnrichedHoldings } from '@/lib/store'
 
 function getProfile(): string {
   if (typeof window === 'undefined') return 'Default'
@@ -30,12 +31,12 @@ export default function RedemptionsPage() {
   useEffect(() => {
     setLoading(true)
     Promise.all([
-      fetch(`/api/redemptions?profile=${encodeURIComponent(profile)}`).then((r) => r.json()),
-      fetch(`/api/holdings?profile=${encodeURIComponent(profile)}`).then((r) => r.json()),
+      Promise.resolve(getRedemptions(profile)),
+      loadEnrichedHoldings(profile),
     ])
       .then(([reds, holds]) => {
-        setRedemptions(reds ?? [])
-        setHoldings(holds ?? [])
+        setRedemptions(reds)
+        setHoldings(holds)
       })
       .catch(() => {})
       .finally(() => setLoading(false))

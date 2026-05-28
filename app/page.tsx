@@ -6,6 +6,7 @@ import PortfolioChart from '@/components/PortfolioChart'
 import { formatINR, formatPct, colorForValue } from '@/lib/types'
 import type { HoldingRow } from '@/lib/types'
 import { xirr } from '@/lib/analytics'
+import { loadEnrichedHoldings } from '@/lib/store'
 
 function getProfile(): string {
   if (typeof window === 'undefined') return 'Default'
@@ -28,9 +29,8 @@ export default function DashboardPage() {
 
   useEffect(() => {
     setLoading(true)
-    fetch(`/api/holdings?profile=${encodeURIComponent(profile)}`)
-      .then((r) => r.json())
-      .then((raw: HoldingRow[]) => setHoldings(raw ?? []))
+    loadEnrichedHoldings(profile)
+      .then((rows) => setHoldings(rows))
       .catch(() => setHoldings([]))
       .finally(() => setLoading(false))
   }, [profile])

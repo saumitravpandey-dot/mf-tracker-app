@@ -12,6 +12,7 @@ import {
   maxDrawdown,
   periodReturn,
 } from '@/lib/analytics'
+import { getHoldings } from '@/lib/store'
 
 function getProfile(): string {
   if (typeof window === 'undefined') return 'Default'
@@ -43,10 +44,7 @@ export default function AnalyticsPage() {
   }, [])
 
   useEffect(() => {
-    fetch(`/api/holdings?profile=${encodeURIComponent(profile)}`)
-      .then((r) => r.json())
-      .then((d: HoldingRow[]) => setHoldings(d ?? []))
-      .catch(() => {})
+    setHoldings(getHoldings(profile) as HoldingRow[])
   }, [profile])
 
   useEffect(() => {

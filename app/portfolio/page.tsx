@@ -5,6 +5,12 @@ import FundSearchInput from '@/components/FundSearchInput'
 import HoldingsTable from '@/components/HoldingsTable'
 import { formatINR, colorForValue } from '@/lib/types'
 import type { HoldingRow, SchemeResult } from '@/lib/types'
+import {
+  addHolding,
+  updateHolding,
+  deleteHolding,
+  loadEnrichedHoldings,
+} from '@/lib/store'
 
 function getProfile(): string {
   if (typeof window === 'undefined') return 'Default'
@@ -42,9 +48,8 @@ export default function PortfolioPage() {
   async function loadHoldings(p: string) {
     setLoading(true)
     try {
-      const res = await fetch(`/api/holdings?profile=${encodeURIComponent(p)}`)
-      const data = await res.json()
-      setHoldings(data ?? [])
+      const rows = await loadEnrichedHoldings(p)
+      setHoldings(rows)
     } catch {
       setHoldings([])
     } finally {
@@ -83,18 +88,10 @@ export default function PortfolioPage() {
         profile_name: profile,
       }
       if (editingId) {
-        await fetch(`/api/holdings/${editingId}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        })
+        updateHolding(editingId, payload)
         setEditingId(null)
       } else {
-        await fetch('/api/holdings', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        })
+        addHolding(payload)
       }
       setForm({ ...EMPTY_FORM })
       setShowAdd(false)
@@ -121,7 +118,7 @@ export default function PortfolioPage() {
 
   async function handleDelete(id: string) {
     if (!confirm('Delete this holding?')) return
-    await fetch(`/api/holdings/${id}`, { method: 'DELETE' })
+    deleteHolding(id)
     loadHoldings(profile)
   }
 
