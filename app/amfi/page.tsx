@@ -88,7 +88,7 @@ export default function AmfiPage() {
           <div className="mb-4 relative">
             <input
               type="text"
-              className="w-full max-w-md border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full max-w-md bg-white text-zinc-900 placeholder-zinc-400 border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               placeholder="Search mutual fund schemes…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}

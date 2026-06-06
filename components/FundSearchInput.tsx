@@ -52,7 +52,7 @@ export default function FundSearchInput({ onSelect, placeholder = 'Search fund..
     <div className="relative" ref={containerRef}>
       <input
         type="text"
-        className="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="w-full bg-white text-zinc-900 placeholder-zinc-400 border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         placeholder={placeholder}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
