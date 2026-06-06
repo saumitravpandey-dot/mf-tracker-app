@@ -154,7 +154,7 @@ export default function PortfolioPage() {
                 <FundSearchInput onSelect={onFundSelect} placeholder="Search and select a fund" />
               ) : (
                 <input
-                  className="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm bg-zinc-50"
+                  className="w-full bg-zinc-50 text-zinc-900 border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none"
                   value={form.scheme_name}
                   readOnly
                 />
@@ -168,7 +168,7 @@ export default function PortfolioPage() {
               <input
                 type="number"
                 step="any"
-                className="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm"
+                className="w-full bg-white text-zinc-900 placeholder-zinc-400 border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 value={form.units}
                 onChange={(e) => setForm((f) => ({ ...f, units: e.target.value }))}
               />
@@ -178,7 +178,7 @@ export default function PortfolioPage() {
               <input
                 type="number"
                 step="any"
-                className="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm"
+                className="w-full bg-white text-zinc-900 placeholder-zinc-400 border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 value={form.buy_nav}
                 onChange={(e) => setForm((f) => ({ ...f, buy_nav: e.target.value }))}
               />
@@ -187,7 +187,7 @@ export default function PortfolioPage() {
               <label className="block text-xs text-zinc-500 mb-1">Buy Date</label>
               <input
                 type="date"
-                className="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm"
+                className="w-full bg-white text-zinc-900 placeholder-zinc-400 border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 value={form.buy_date}
                 onChange={(e) => setForm((f) => ({ ...f, buy_date: e.target.value }))}
               />
@@ -196,7 +196,7 @@ export default function PortfolioPage() {
               <label className="block text-xs text-zinc-500 mb-1">Notes (optional)</label>
               <input
                 type="text"
-                className="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm"
+                className="w-full bg-white text-zinc-900 placeholder-zinc-400 border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 value={form.notes}
                 onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
               />

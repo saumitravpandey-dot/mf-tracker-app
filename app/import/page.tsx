@@ -171,7 +171,7 @@ export default function ImportPage() {
         <div className="bg-white rounded-xl border border-zinc-200 shadow-sm p-6">
           <h2 className="font-semibold text-zinc-900 mb-4">Select a profile to import into</h2>
           <select
-            className="border border-zinc-300 rounded-lg px-3 py-2 text-sm w-full mb-4"
+            className="bg-white text-zinc-900 border border-zinc-300 rounded-lg px-3 py-2 text-sm w-full mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             value={profile}
             onChange={(e) => setProfile(e.target.value)}
           >
@@ -183,7 +183,7 @@ export default function ImportPage() {
           </select>
           <div className="flex gap-2 mb-4">
             <input
-              className="flex-1 border border-zinc-300 rounded-lg px-3 py-2 text-sm"
+              className="flex-1 bg-white text-zinc-900 placeholder-zinc-400 border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               placeholder="Or create new profile…"
               value={newProfileName}
               onChange={(e) => setNewProfileName(e.target.value)}

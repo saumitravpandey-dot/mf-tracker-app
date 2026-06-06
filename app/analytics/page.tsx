@@ -82,7 +82,7 @@ export default function AnalyticsPage() {
       <div className="bg-white rounded-xl border border-zinc-200 shadow-sm p-4 mb-6">
         <label className="block text-xs text-zinc-500 mb-2">Select Fund</label>
         <select
-          className="border border-zinc-300 rounded-lg px-3 py-2 text-sm w-full max-w-sm"
+          className="bg-white text-zinc-900 border border-zinc-300 rounded-lg px-3 py-2 text-sm w-full max-w-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           value={selectedCode ?? ''}
           onChange={(e) => {
             const code = Number(e.target.value)
